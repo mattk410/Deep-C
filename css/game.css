@@ -1,0 +1,24 @@
+.background    { background: rgb(52, 166, 251);
+                 border-spacing: 0;              }
+
+.shark          { background: grey; }
+.wall          { background: #FFDAB5;              }
+
+.actor  { position: absolute;            }
+.fish   { background: gold; }
+.player { background: red;   }
+.seaweed {background: green; }
+
+.lost .player {
+  background: rgb(160, 64, 64);
+}
+.won .player {
+  box-shadow: -4px -7px 8px white, 4px -7px 8px white;
+}
+
+.game {
+  overflow: hidden;
+  max-width: 600px;
+  max-height: 450px;
+  position: relative;
+}
