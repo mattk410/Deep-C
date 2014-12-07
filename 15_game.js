@@ -1,27 +1,3 @@
-var GAME_LEVELS = [
-["                                                                                                      ",
-"                                                                                                       ",
-"                                                                                                       ",
-"                                                                                                       ",
-"                                                                                x                      ",
-"                                                   xx            xxxxx                  o              ",
-"                                    o o      xx                  xxxxx        =                        ",
-"                           =                          =          xxxxx                                 ",
-"                                   xxxxx                       o  xxx                                  ",
-"                                                                                                   xx  ",
-"  xx                                      o o              xx                                       x  ",
-"  x                     o           =                         o                                     x  ",
-"  x                                      xxxxx                     s                  =           o x  ",
-"  x            x     s  o                   s                      s        s                       x  ",
-"  x  @       xxx     s                    s s s                  xxxxx      s     s          xx     x  ",
-"  xxxxxxxxxxxx  xxxxxxxxxxxxxxx           sssss            xxxxxxx   xxxxx  s    ss     o  x   xxxxxx  ",
-"                              x             s              x              xxxxx  s  xxx   x            ",
-"                              x   xxxxxxxxxxxxxxxxxxxx     x                   xxxxx   xxx             ",
-"                              x   x                  x   o x                                           ",
-"                              xxxxx                  xxxxxxx                                           ",
-"                                                                                                       ",
-"                                                                                                       "]
-];
 
 if (typeof module != "undefined" && module.exports)
   module.exports = GAME_LEVELS;
@@ -56,6 +32,8 @@ function Level(plan) {
         this.actors.push(new Actor(new Vector(x, y), ch));
       else if (ch == "x")
         fieldType = "wall";
+      else if (ch =="!")
+        fieldType = "shark";
       gridLine.push(fieldType);
     }
     this.grid.push(gridLine);
@@ -276,15 +254,24 @@ Seaweed.prototype.act = function(step) {
 };
 
 
-var playerXSpeed = 7;
-var playerYSpeed = 7;
+var playerXSpeed = 12;
+var gravity= 20;
+var jumpSpeed= 6;
 
-Player.prototype.moveX = function(step, level, keys) {
+Player.prototype.move = function(step, level, keys) {
   this.speed.x = 0;
-  if (keys.left) this.speed.x -= playerXSpeed;
-  if (keys.right) this.speed.x += playerXSpeed;
+  this.speed.y += step * gravity;
 
-  var motion = new Vector(this.speed.x * step, 0);
+  if (keys.left){
+    this.speed.x -= playerXSpeed;
+    this.speed.y = -jumpSpeed;
+  }
+  if (keys.right){
+    this.speed.x += playerXSpeed;
+    this.speed.y = -jumpSpeed;
+  }
+
+  var motion = new Vector(this.speed.x * step, this.speed.y * step);
   var newPos = this.pos.plus(motion);
   var obstacle = level.obstacleAt(newPos, this.size);
   if (obstacle)
@@ -294,24 +281,8 @@ Player.prototype.moveX = function(step, level, keys) {
 };
 
 
-Player.prototype.moveY = function(step, level, keys) {
-  this.speed.y = 0;
-  if (keys.up) this.speed.y -= playerYSpeed;
-  if (keys.down) this.speed.y += playerYSpeed;
-
-  var motion = new Vector(0, this.speed.y * step);
-  var newPos = this.pos.plus(motion);
-  var obstacle = level.obstacleAt(newPos, this.size);
-  if (obstacle)
-    level.playerTouched(obstacle);
-    else
-      this.pos = newPos;
-    };
-
-
 Player.prototype.act = function(step, level, keys) {
-  this.moveX(step, level, keys);
-  this.moveY(step, level, keys);
+  this.move(step, level, keys);
 
   var otherActor = level.actorAt(this);
   if (otherActor)
@@ -346,7 +317,7 @@ Level.prototype.playerTouched = function(type, actor) {
   }
 };
 
-var arrowCodes = {37: "left", 38: "up", 39: "right", 40: "down"};
+var arrowCodes = {37: "left", 39: "right"};
 
 function trackKeys(codes) {
   var pressed = Object.create(null);
