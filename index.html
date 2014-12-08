@@ -2,10 +2,77 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="css/game.css">
+		<script src="//www.parsecdn.com/js/parse-1.3.2.min.js"></script>
 	</head>
 
 	<body>	
-		<script src="levels.js"></script>
-		<script src= "game.js"></script>
+	<script src="js/levels.js"></script>
+	<script src= "js/game.js"></script>
+	<script>
+	Parse.initialize("xt3QHvQY0V0puVDNU7iUyOqFtWr08B7nnU57bPY3", "3KPVmOTDZtlZSlJ3zL22OZGqqA53qioFNJk0aXOB");
+
+	//Create the test object
+	var hahaha = Parse.Object.extend("hahaha");
+	var testObject = new hahaha();
+	testObject.save({foo: "bar"}).then(function(object) {
+ 	 alert("yay! it worked");
+	});
+
+	//create the users: 
+	
+	
+
+	//create my own object 
+	var HighScore = Parse.Object.extend("HighScore");
+	var highScore = new HighScore();
+	highScore.save(
+		{ 
+			score: 1357,
+			userName: "Guanlun Mu"	,
+			scoreHistory: [134,124,1456,1324,556]
+		}, 
+		{
+			success: function (highScore) {
+				highScore.set("cheatMode", true);
+				highScore.increment("score");
+				highScore.remove();
+				highScore.save();
+			}
+		}
+		);
+
+	highScore.set("parent",testObject);
+	highScore.unset("socre");
+	highScore.save();
+
+
+	var query = new Parse.Query(HighScore);
+	query.ascending("objectId");
+	query.limit(10);
+	query.find({
+		success:function(highScore)
+		{
+			for (var i = 0; i < highScore.length; i++){
+				console.log(highScore[i].id);
+			}
+		},
+		error:function(results)
+		{
+			console.log(results);
+		}
+	});
+
+		  
+	
+	var dimensions = {
+	  // What type of news is this? 
+	  category: 'politics',
+	  // Is it a weekday or a weekend?
+	  dayType: 'weekday'
+	};
+	// Send the dimensions to Parse along with the 'search' event
+	 
+	Parse.Analytics.track('read', dimensions)
+	</script>
 	</body>
 </html>
