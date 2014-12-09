@@ -1,15 +1,3 @@
-var simpleLevelPlan = [
-  "                      ",
-  "                      ",
-  "  x              = x  ",
-  "  x         o o    x  ",
-  "  x @      xxxxx   x  ",
-  "  xxxxx            x  ",
-  "      x!!!!!!!!!!!!x  ",
-  "      xxxxxxxxxxxxxx  ",
-  "                      "
-];
-
 
 function Level(plan) {
   this.width = plan[0].length;
@@ -263,20 +251,23 @@ Player.prototype.moveX = function(step, level, keys) {
     this.pos = newPos;
 };
 
+var gravity = 38;
+var jumpSpeed = 17;
 
 Player.prototype.moveY = function(step, level, keys) {
-  this.speed.y = 0;
-  if (keys.up) this.speed.y -= playerYSpeed;
-  if (keys.down) this.speed.y += playerYSpeed;
-
+  this.speed.y += step * gravity;
   var motion = new Vector(0, this.speed.y * step);
   var newPos = this.pos.plus(motion);
   var obstacle = level.obstacleAt(newPos, this.size);
-  if (obstacle)
+  if (obstacle) {
     level.playerTouched(obstacle);
-    else
-      this.pos = newPos;
-    };
+    this.speed.y = step * gravity;
+  } else {
+    this.pos = newPos;
+  }
+  if (keys.up && this.speed.y > 0)
+      this.speed.y = -jumpSpeed;
+};
 
 
 Player.prototype.act = function(step, level, keys) {
