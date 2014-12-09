@@ -2,6 +2,7 @@
                  border-spacing: 0;              }
 
 .shark          { background: grey; }
+.ground         { background: #C19A6B;}
 .wall          { background: #FFDAB5;              }
 
 .actor  { position: absolute;            }
