@@ -3,20 +3,6 @@ if (typeof module != "undefined" && module.exports)
   module.exports = GAME_LEVELS;
 
 
-
-var simpleLevelPlan = [
-  "                      ",
-  "                      ",
-  "  x              = x  ",
-  "  x         o o    x  ",
-  "  x @      xxxxx   x  ",
-  "  xxxxx            x  ",
-  "      x!!!!!!!!!!!!x  ",
-  "      xxxxxxxxxxxxxx  ",
-  "                      "
-];
-
-
 function Level(plan) {
   this.width = plan[0].length;
   this.height = plan.length;
@@ -33,7 +19,7 @@ function Level(plan) {
       else if (ch == "x")
         fieldType = "wall";
       else if (ch =="!")
-        fieldType = "shark";
+        fieldType = "ground";
       gridLine.push(fieldType);
     }
     this.grid.push(gridLine);
@@ -65,6 +51,9 @@ var actorChars = {
   "=": Shark, "|": Shark, "v": Shark,
   "s": Seaweed,
 };
+
+var score = 0;
+var causeOfDeath;
 
 
 function Player(pos) {
@@ -296,7 +285,9 @@ Player.prototype.act = function(step, level, keys) {
 };
 
 Level.prototype.playerTouched = function(type, actor) {
-  if (type == "shark" && this.status == null) {
+  if ((type == "shark" || type == "ground") && this.status == null) {
+    causeOfDeath= type;
+    document.getElementById("death").innerHTML= "Last Cause of Death: " + causeOfDeath;
     this.status = "lost";
     this.finishDelay = 1;
   }
@@ -307,6 +298,8 @@ Level.prototype.playerTouched = function(type, actor) {
       return other != actor;
     });
     if (!this.actors.some(function(actor) {
+      score += 100;
+      document.getElementById("score").innerHTML= "Score: " + score;
       return actor.type == "fish";
     })) {
     	if(this.status==null){
@@ -353,6 +346,8 @@ var arrows = trackKeys(arrowCodes);
 function runLevel(level, Display, andThen) {
     var display = new Display(document.body, level);
     var running = "yes";
+    clear_timer();
+    init_timer();
     function handleKey(event) {
       if (event.keyCode == 27) {
         if (running == "no") {
@@ -417,15 +412,46 @@ function runLevel(level, Display, andThen) {
 function runGame(plans, Display) {
   function startLevel(n) {
     runLevel(new Level(plans[n]), Display, function(status) {
-      if (status == "lost")
+      if (status == "lost"){
+        score=0;
+        document.getElementById("score").innerHTML= "Score: " + score;
         startLevel(n);
-      else if (n < plans.length - 1)
+      }
+      else if (n < plans.length - 1){
+        score += 500;
+        document.getElementById("score").innerHTML= "Score: " + score;
         startLevel(n + 1);
+      }
       else
         console.log("You win!");
+        clear_timer();
     });
   }
   startLevel(0);
 }
+
+
+var timer;
+var elapsed;
+
+function init_timer() {
+  elapsed = 0;
+  tick();
+}
+
+function tick() {
+  elapsed++;
+  document.getElementById('time').innerHTML = "Time Elapsed: "+elapsed+"s";
+  score-= elapsed*3;
+  document.getElementById("score").innerHTML= "Score: " + score;
+  timer = setTimeout('tick()', 1000);
+}
+
+function clear_timer() {
+  clearTimeout(timer);
+}
+
+
+
 
 runGame(GAME_LEVELS, DOMDisplay);
