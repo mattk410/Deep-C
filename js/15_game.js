@@ -52,7 +52,8 @@ var actorChars = {
   "s": Seaweed,
 };
 
-var score = 0;
+var score=0;
+var lastScore=0;
 var causeOfDeath;
 
 
@@ -346,7 +347,6 @@ var arrows = trackKeys(arrowCodes);
 function runLevel(level, Display, andThen) {
     var display = new Display(document.body, level);
     var running = "yes";
-    clear_timer();
     init_timer();
     function handleKey(event) {
       if (event.keyCode == 27) {
@@ -413,12 +413,13 @@ function runGame(plans, Display) {
   function startLevel(n) {
     runLevel(new Level(plans[n]), Display, function(status) {
       if (status == "lost"){
-        score=0;
+        score=lastScore;
         document.getElementById("score").innerHTML= "Score: " + score;
         startLevel(n);
       }
       else if (n < plans.length - 1){
         score += 500;
+        lastScore=score;
         document.getElementById("score").innerHTML= "Score: " + score;
         startLevel(n + 1);
       }
@@ -442,7 +443,7 @@ function init_timer() {
 function tick() {
   elapsed++;
   document.getElementById('time').innerHTML = "Time Elapsed: "+elapsed+"s";
-  score-= elapsed*3;
+  score-= 3;
   document.getElementById("score").innerHTML= "Score: " + score;
   timer = setTimeout('tick()', 1000);
 }
