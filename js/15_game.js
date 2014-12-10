@@ -288,6 +288,10 @@ Player.prototype.act = function(step, level, keys) {
 Level.prototype.playerTouched = function(type, actor) {
   if ((type == "shark" || type == "ground") && this.status == null) {
     causeOfDeath= type;
+    if(causeOfDeath=="shark")
+      sharkDeaths++;
+    else if(causeOfDeath=="ground")
+        groundDeaths++;
     document.getElementById("death").innerHTML= "Last Cause of Death: " + causeOfDeath;
     this.status = "lost";
     this.finishDelay = 1;
@@ -300,6 +304,7 @@ Level.prototype.playerTouched = function(type, actor) {
     });
     if (!this.actors.some(function(actor) {
       score += 100;
+      fishEaten++;
       document.getElementById("score").innerHTML= "Score: " + score;
       return actor.type == "fish";
     })) {
@@ -411,6 +416,7 @@ function runLevel(level, Display, andThen) {
 
 function runGame(plans, Display) {
   function startLevel(n) {
+    checkAchievements();
     runLevel(new Level(plans[n]), Display, function(status) {
       if (status == "lost"){
         score=lastScore;
@@ -431,7 +437,7 @@ function runGame(plans, Display) {
   startLevel(0);
 }
 
-
+//Level Time Counter
 var timer;
 var elapsed;
 
@@ -450,4 +456,58 @@ function tick() {
 
 function clear_timer() {
   clearTimeout(timer);
+}
+
+
+//Achievements
+var fishEaten = 0;
+var sharkDeaths =0;
+var groundDeaths =0;
+
+var myAchievements=[
+  //Shark
+  {name:"Shark Attack", type:"s", value: 10, text:"Get eaten by sharks 10 times", earned: false},
+  {name:"Shark Bait", type:"s", value: 25, text:"Get eaten by sharks 25 times", earned: false},
+  {name:"Shark Week", type:"s", value: 50, text:"Get eaten by 50 sharks", earned: false},
+  //Ground
+  {name:"Sink or Swim", type:"g", value: 20, text:"Touch the ground 20 times", earned: false},
+  {name:"Bottom Feeder", type:"g", value: 25, text:"Touch the ground 25 times", earned: false},
+  //Fish
+  {name:"Feeding Frenzy", type:"f", value: 100, text:"Eat a total of 100 fish", earned: false},
+  {name:"Snack Time", type:"f", value: 15, text:"Eat a total of 15 fish", earned: false},
+  {name:"Buffet", type:"f", value: 50, text:"Eat a total of 50 fish", earned: false},
+  {name:"Dinner", type:"f", value: 25, text:"Eat a total of 25 fish", earned: false},
+  //Time
+  {name:"Sea Slug", type:"t", value: 180, text:"Spend at least 180 seconds on a level", earned: false},
+  {name:"Sea Snail", type:"t", value: 120, text:"Spend at least 120 seconds on a level", earned: false},
+  {name:"Fast Food", type:"t", value: 15, text:"Finish a level in under 60 seconds", earned: false}
+];
+
+function checkAchievements(){
+  console.log("CA called");
+  console.log("G: "+ groundDeaths +", S: "+sharkDeaths + ", F: "+fishEaten);
+  for(var i=0; i<myAchievements.length; i++){
+    if(!myAchievements[i].earned){
+      if(myAchievements[i].type=="s"){
+        if(sharkDeaths >= myAchievements[i].value){
+          myAchievements[i].earned=true;
+          console.log("Earned: "+myAchievements[i].name+"- "+ myAchievements[i].text);
+        }
+      }
+
+      if(myAchievements[i].type=="g"){
+        if(groundDeaths >= myAchievements[i].value){
+          myAchievements[i].earned=true;
+          console.log("Earned: "+myAchievements[i].name+"- "+ myAchievements[i].text);
+        }
+      }
+
+      if(myAchievements[i].type=="f"){
+        if(fishEaten >= myAchievements[i].value){
+          myAchievements[i].earned=true;
+          console.log("Earned: "+myAchievements[i].name+"- "+ myAchievements[i].text);
+        }
+      }
+    }
+  }
 }
