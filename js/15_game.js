@@ -451,8 +451,3 @@ function tick() {
 function clear_timer() {
   clearTimeout(timer);
 }
-
-
-
-
-runGame(GAME_LEVELS, DOMDisplay);
