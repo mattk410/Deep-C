@@ -484,7 +484,6 @@ var myAchievements=[
 ];
 
 function checkAchievements(){
-  console.log("CA called");
   console.log("G: "+ groundDeaths +", S: "+sharkDeaths + ", F: "+fishEaten);
   for(var i=0; i<myAchievements.length; i++){
     if(!myAchievements[i].earned){
