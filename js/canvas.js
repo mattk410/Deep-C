@@ -98,19 +98,19 @@ CanvasDisplay.prototype.drawBackground = function() {
 };
 
 var playerSprites = document.createElement("img");
-playerSprites.src = "img/player.png";
+playerSprites.src = "img/cfish_sprite.png";
 var playerXOverlap = 4;
 
 CanvasDisplay.prototype.drawPlayer = function(x, y, width,
                                               height) {
-  var sprite = 8, player = this.level.player;
+  var sprite = 3, player = this.level.player;
   width += playerXOverlap * 2;
   x -= playerXOverlap;
   if (player.speed.x != 0)
     this.flipPlayer = player.speed.x < 0;
 
   if (player.speed.y != 0)
-    sprite = 9;
+    sprite = 4;
   else if (player.speed.x != 0)
     sprite = Math.floor(this.animationTime * 12) % 8;
 
@@ -119,8 +119,8 @@ CanvasDisplay.prototype.drawPlayer = function(x, y, width,
     flipHorizontally(this.cx, x + width / 2);
 
   this.cx.drawImage(playerSprites,
-                    sprite * width, 0, width, height,
-                    x,              y, width, height);
+                    sprite * width, 0, width*2, height*2,
+                    x,              y, width*2, height*2);
 
   this.cx.restore();
 };
