@@ -2,6 +2,7 @@
                  border-spacing: 0;              }
 
 .shark          { background: grey; }
+.ground         { background: #C19A6B;}
 .wall          { background: #FFDAB5;              }
 
 .actor  { position: absolute;            }
@@ -22,3 +23,18 @@
   max-height: 450px;
   position: relative;
 }
+
+
+/*
+  Clownfish animation
+*/
+.frame {
+  background-color: transparent;
+  background-image: url(sprite-cfish8f48d8745ac2b27ca53b5e7489a2acc6.jpg);
+  background-repeat: no-repeat;
+  width: 32px;  }
+  .frame-0 { background-position: 0 0; }
+  .frame-1 { background-position: -64px 0; }
+  .frame-2 { background-position: -96px 0; }
+  .frame-3 { background-position: -128px 0; }
+  

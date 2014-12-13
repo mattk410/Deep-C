@@ -1,4 +1,8 @@
 
+if (typeof module != "undefined" && module.exports)
+  module.exports = GAME_LEVELS;
+
+
 function Level(plan) {
   this.width = plan[0].length;
   this.height = plan.length;
@@ -14,6 +18,8 @@ function Level(plan) {
         this.actors.push(new Actor(new Vector(x, y), ch));
       else if (ch == "x")
         fieldType = "wall";
+      else if (ch =="!")
+        fieldType = "ground";
       gridLine.push(fieldType);
     }
     this.grid.push(gridLine);
@@ -45,6 +51,10 @@ var actorChars = {
   "=": Shark, "|": Shark, "v": Shark,
   "s": Seaweed,
 };
+
+var score=0;
+var lastScore=0;
+var causeOfDeath;
 
 
 function Player(pos) {
@@ -234,15 +244,24 @@ Seaweed.prototype.act = function(step) {
 };
 
 
-var playerXSpeed = 7;
-var playerYSpeed = 7;
+var playerXSpeed = 12;
+var gravity= 20;
+var jumpSpeed= 6;
 
-Player.prototype.moveX = function(step, level, keys) {
+Player.prototype.move = function(step, level, keys) {
   this.speed.x = 0;
-  if (keys.left) this.speed.x -= playerXSpeed;
-  if (keys.right) this.speed.x += playerXSpeed;
+  this.speed.y += step * gravity;
 
-  var motion = new Vector(this.speed.x * step, 0);
+  if (keys.left){
+    this.speed.x -= playerXSpeed;
+    this.speed.y = -jumpSpeed;
+  }
+  if (keys.right){
+    this.speed.x += playerXSpeed;
+    this.speed.y = -jumpSpeed;
+  }
+
+  var motion = new Vector(this.speed.x * step, this.speed.y * step);
   var newPos = this.pos.plus(motion);
   var obstacle = level.obstacleAt(newPos, this.size);
   if (obstacle)
@@ -251,28 +270,9 @@ Player.prototype.moveX = function(step, level, keys) {
     this.pos = newPos;
 };
 
-var gravity = 38;
-var jumpSpeed = 17;
-
-Player.prototype.moveY = function(step, level, keys) {
-  this.speed.y += step * gravity;
-  var motion = new Vector(0, this.speed.y * step);
-  var newPos = this.pos.plus(motion);
-  var obstacle = level.obstacleAt(newPos, this.size);
-  if (obstacle) {
-    level.playerTouched(obstacle);
-    this.speed.y = step * gravity;
-  } else {
-    this.pos = newPos;
-  }
-  if (keys.up && this.speed.y > 0)
-      this.speed.y = -jumpSpeed;
-};
-
 
 Player.prototype.act = function(step, level, keys) {
-  this.moveX(step, level, keys);
-  this.moveY(step, level, keys);
+  this.move(step, level, keys);
 
   var otherActor = level.actorAt(this);
   if (otherActor)
@@ -286,7 +286,13 @@ Player.prototype.act = function(step, level, keys) {
 };
 
 Level.prototype.playerTouched = function(type, actor) {
-  if (type == "shark" && this.status == null) {
+  if ((type == "shark" || type == "ground") && this.status == null) {
+    causeOfDeath= type;
+    if(causeOfDeath=="shark")
+      sharkDeaths++;
+    else if(causeOfDeath=="ground")
+        groundDeaths++;
+    document.getElementById("death").innerHTML= "Last Cause of Death: " + causeOfDeath;
     this.status = "lost";
     this.finishDelay = 1;
   }
@@ -297,6 +303,9 @@ Level.prototype.playerTouched = function(type, actor) {
       return other != actor;
     });
     if (!this.actors.some(function(actor) {
+      score += 100;
+      fishEaten++;
+      document.getElementById("score").innerHTML= "Score: " + score;
       return actor.type == "fish";
     })) {
     	if(this.status==null){
@@ -307,7 +316,7 @@ Level.prototype.playerTouched = function(type, actor) {
   }
 };
 
-var arrowCodes = {37: "left", 38: "up", 39: "right", 40: "down"};
+var arrowCodes = {37: "left", 39: "right"};
 
 function trackKeys(codes) {
   var pressed = Object.create(null);
@@ -343,6 +352,7 @@ var arrows = trackKeys(arrowCodes);
 function runLevel(level, Display, andThen) {
     var display = new Display(document.body, level);
     var running = "yes";
+    init_timer();
     function handleKey(event) {
       if (event.keyCode == 27) {
         if (running == "no") {
@@ -406,16 +416,97 @@ function runLevel(level, Display, andThen) {
 
 function runGame(plans, Display) {
   function startLevel(n) {
+    checkAchievements();
     runLevel(new Level(plans[n]), Display, function(status) {
-      if (status == "lost")
+      if (status == "lost"){
+        score=lastScore;
+        document.getElementById("score").innerHTML= "Score: " + score;
         startLevel(n);
-      else if (n < plans.length - 1)
+      }
+      else if (n < plans.length - 1){
+        score += 500;
+        lastScore=score;
+        document.getElementById("score").innerHTML= "Score: " + score;
         startLevel(n + 1);
+      }
       else
         console.log("You win!");
+        clear_timer();
     });
   }
   startLevel(0);
 }
 
-runGame(GAME_LEVELS, DOMDisplay);
+//Level Time Counter
+var timer;
+var elapsed;
+
+function init_timer() {
+  elapsed = 0;
+  tick();
+}
+
+function tick() {
+  elapsed++;
+  document.getElementById('time').innerHTML = "Time Elapsed: "+elapsed+"s";
+  score-= 3;
+  document.getElementById("score").innerHTML= "Score: " + score;
+  timer = setTimeout('tick()', 1000);
+}
+
+function clear_timer() {
+  clearTimeout(timer);
+}
+
+
+//Achievements
+var fishEaten = 0;
+var sharkDeaths =0;
+var groundDeaths =0;
+
+var myAchievements=[
+  //Shark
+  {name:"Shark Attack", type:"s", value: 10, text:"Get eaten by sharks 10 times", earned: false},
+  {name:"Shark Bait", type:"s", value: 25, text:"Get eaten by sharks 25 times", earned: false},
+  {name:"Shark Week", type:"s", value: 50, text:"Get eaten by 50 sharks", earned: false},
+  //Ground
+  {name:"Sink or Swim", type:"g", value: 20, text:"Touch the ground 20 times", earned: false},
+  {name:"Bottom Feeder", type:"g", value: 25, text:"Touch the ground 25 times", earned: false},
+  //Fish
+  {name:"Feeding Frenzy", type:"f", value: 100, text:"Eat a total of 100 fish", earned: false},
+  {name:"Snack Time", type:"f", value: 15, text:"Eat a total of 15 fish", earned: false},
+  {name:"Buffet", type:"f", value: 50, text:"Eat a total of 50 fish", earned: false},
+  {name:"Dinner", type:"f", value: 25, text:"Eat a total of 25 fish", earned: false},
+  //Time
+  {name:"Sea Slug", type:"t", value: 180, text:"Spend at least 180 seconds on a level", earned: false},
+  {name:"Sea Snail", type:"t", value: 120, text:"Spend at least 120 seconds on a level", earned: false},
+  {name:"Fast Food", type:"t", value: 15, text:"Finish a level in under 60 seconds", earned: false}
+];
+
+function checkAchievements(){
+  console.log("G: "+ groundDeaths +", S: "+sharkDeaths + ", F: "+fishEaten);
+  for(var i=0; i<myAchievements.length; i++){
+    if(!myAchievements[i].earned){
+      if(myAchievements[i].type=="s"){
+        if(sharkDeaths >= myAchievements[i].value){
+          myAchievements[i].earned=true;
+          console.log("Earned: "+myAchievements[i].name+"- "+ myAchievements[i].text);
+        }
+      }
+
+      if(myAchievements[i].type=="g"){
+        if(groundDeaths >= myAchievements[i].value){
+          myAchievements[i].earned=true;
+          console.log("Earned: "+myAchievements[i].name+"- "+ myAchievements[i].text);
+        }
+      }
+
+      if(myAchievements[i].type=="f"){
+        if(fishEaten >= myAchievements[i].value){
+          myAchievements[i].earned=true;
+          console.log("Earned: "+myAchievements[i].name+"- "+ myAchievements[i].text);
+        }
+      }
+    }
+  }
+}
