@@ -32,8 +32,11 @@ body {
 }
 
 #welcome-page{
- zoom:250%;   
+    zoom:250%;
+    position:absolute;
+    resize: both;
 }
+
 .textbar{
     width: 221px;
     background: transparent;

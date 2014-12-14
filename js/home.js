@@ -19,6 +19,7 @@ function createUser(username,password,email)
               document.getElementById("signup-error").style.visibility = "hidden";
               gamePage.style.display = "block";
               welcomePage.style.display = "none";
+              runGame(GAME_LEVELS, CanvasDisplay);
 		  },
 		  error: function(user, error) {
 			signupError.innerHTML = error.message;
@@ -35,6 +36,7 @@ function loginUser(username, password){
         document.getElementById("login-error").style.visibility = "hidden";
         gamePage.style.display = "block";
         welcomePage.style.display = "none";
+        runGame(GAME_LEVELS, CanvasDisplay);
       },
       error: function(user, error) 
       {
