@@ -249,20 +249,21 @@ var playerXSpeed = 12;
 var gravity= 30;
 var jumpSpeed= 6;
 
-Player.prototype.move = function(step, level, keys) {
+Player.prototype.moveX = function(step, level, keys) {
   this.speed.x = 0;
-  this.speed.y += step * gravity;
-
-  if (keys.left){
+  if (keys.left) {
     this.speed.x -= playerXSpeed;
     this.speed.y = -jumpSpeed;
+
   }
-  if (keys.right){
+
+  if (keys.right) {
     this.speed.x += playerXSpeed;
     this.speed.y = -jumpSpeed;
   }
 
-  var motion = new Vector(this.speed.x * step, this.speed.y * step);
+
+  var motion = new Vector(this.speed.x * step, 0);
   var newPos = this.pos.plus(motion);
   var obstacle = level.obstacleAt(newPos, this.size);
   if (obstacle)
@@ -271,9 +272,28 @@ Player.prototype.move = function(step, level, keys) {
     this.pos = newPos;
 };
 
+var gravity = 50;
+var jumpSpeed = 7;
+
+Player.prototype.moveY = function(step, level, keys) {
+  this.speed.y += step * gravity;
+  var motion = new Vector(0, this.speed.y * step);
+  var newPos = this.pos.plus(motion);
+  var obstacle = level.obstacleAt(newPos, this.size);
+  /*if (keys.up && this.speed.y > 0)
+      this.speed.y = -jumpSpeed;*/
+  if (obstacle) {
+    level.playerTouched(obstacle);  
+  } 
+  else {
+    this.pos = newPos;
+  }
+};
+
 
 Player.prototype.act = function(step, level, keys) {
-  this.move(step, level, keys);
+  this.moveX(step, level, keys);
+  this.moveY(step, level, keys); 
 
   var otherActor = level.actorAt(this);
   if (otherActor)
