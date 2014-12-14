@@ -4,8 +4,10 @@ var loginError = document.getElementById("login-error");
 var signupError = document.getElementById("signup-error");
 var login = document.getElementById("login-form");
 var signup = document.getElementById("signup-form");
-
+var gamePage = document.getElementById("game-page");
+var welcomePage = document.getElementById("welcome-page");
 function createUser(username,password,email)
+
     {
 		var user = new Parse.User();
 		user.set("username", username);
@@ -15,14 +17,12 @@ function createUser(username,password,email)
 		user.signUp(null, {
 		  success: function(user) {
               document.getElementById("signup-error").style.visibility = "hidden";
-              document.getElementById("signup-username").value = "";
-              document.getElementById("signup-password").value = ""; 
-              document.getElementById("signup-email").value = "";
-              alert("Welcome to the Deep-C Diver!");
+              gamePage.style.display = "block";
+              welcomePage.style.display = "none";
 		  },
 		  error: function(user, error) {
 			signupError.innerHTML = error.message;
-      signupError.style.visibility = "visible";
+            signupError.style.visibility = "visible";
 		  }
 		});
     }
@@ -33,7 +33,8 @@ function loginUser(username, password){
       success: function(user) 
       {
         document.getElementById("login-error").style.visibility = "hidden";
-
+        gamePage.style.display = "block";
+        welcomePage.style.display = "none";
       },
       error: function(user, error) 
       {

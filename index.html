@@ -6,32 +6,55 @@
     <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
     <script src="http://www.parsecdn.com/js/parse-1.2.13.min.js"></script>
     <link rel = "stylesheet" href = "css/home.css" />
+    <link rel="stylesheet" href="css/game.css">
   </head>
-<div class="form" id = "login-form" style = "display:block">
-<form >
-  <h2 id = "loginTitle" class = "title" >Log In</h2>
-  <div id="login-error" class = "error" style = "visibility:hidden"></div>
-  <input class = "textbar" type="text" id="login-username" placeholder="Username" /><br>
-  <input class = "textbar" type="password" id="login-password" placeholder="Password" /><br>
-  <input class = "button" type = "button" id = "login-button" value = "Log In" />
-  <span id = "goSignup" class = "help">Need an Account?</span>
-</div>  
+
+<body>
+<div  id="welcome-page" >
+    <div class="form" id = "login-form" style = "display:block">
+        <form >
+          <h2 id = "loginTitle" class = "title" >Log In</h2>
+          <div id="login-error" class = "error" style = "visibility:hidden"></div>
+          <input class = "textbar" type="text" id="login-username" placeholder="Username" /><br>
+          <input class = "textbar" type="password" id="login-password" placeholder="Password" /><br>
+          <input class = "button" type = "button" id = "login-button" value = "Log In" />
+          <span id = "goSignup" class = "help">Need an Account?</span>
+        </form>
+    </div> 
    
-    
-<div class="form" id = "signup-form" style = "display:none">
-</form>
-<form >
-  <h2 id = "signupTitle" class = "title">Sign Up</h2>
-  <div id ="signup-error" class = "error" style = "visibility:hidden" ></div>
-  <input class = "textbar" type="text" id="signup-username" placeholder="Username"   /><br>
-  <input class = "textbar" type="password" id="signup-password" placeholder="Create a Password"   /><br>
-  <input class = "textbar" type = "email" id = "signup-email" placeholder = "Email Address"     /> <br>
-  <input class = "button" type="button" id = "signup-button" value="Sign Up"/>
-  <span id = "goLogin" class = "help">Already Have Account?</span>
- </form>
+    <div class="form" id = "signup-form" style = "display:none">
+        <form>
+          <h2 id = "signupTitle" class = "title">Sign Up</h2>
+          <div id ="signup-error" class = "error" style = "visibility:hidden" ></div>
+          <input class = "textbar" type="text" id="signup-username" placeholder="Username"   /><br>
+          <input class = "textbar" type="password" id="signup-password" placeholder="Create a Password" /><br>
+          <input class = "textbar" type = "email" id = "signup-email" placeholder = "Email Address" /> <br>
+          <input class = "button" type="button" id = "signup-button" value="Sign Up"/>
+          <span id = "goLogin" class = "help">Already Have Account?</span>
+         </form>
+    </div>
+</div>  
+
+ 
+<div id = "game-page" style = "display:none">
+    <div id="status">
+        <p id="score">Score: 0</p>
+        <p id="time">Time Elapsed: 0s</p>
+        <p id="death">Last Cause of Death: none</p>
+    </div>
+
 </div>
 
 
- <script src = js/home.js></script>
+<script src="js/level.js"></script>
+<script src="js/15_game.js"></script>
+<script src="js/canvas.js"></script>
+<script>
+    var gamePage = document.getElementById("game-page");
+    runGame(GAME_LEVELS, CanvasDisplay(gamePage));</script>
+<script src = js/home.js></script>
+    
+</body>
+
 
 </html>
