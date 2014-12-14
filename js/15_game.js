@@ -1,8 +1,7 @@
-
 if (typeof module != "undefined" && module.exports)
   module.exports = GAME_LEVELS;
 
-
+//Set up the map where plan is an array of string. 
 function Level(plan) {
   this.width = plan[0].length;
   this.height = plan.length;
@@ -45,6 +44,7 @@ Vector.prototype.times = function(factor) {
   return new Vector(this.x * factor, this.y * factor);
 };
 
+//Define the figure according to the chatacter: 
 var actorChars = {
   "@": Player,
   "o": Fish,
@@ -52,6 +52,7 @@ var actorChars = {
   "s": Seaweed,
 };
 
+//personal info of the player: 
 var score=0;
 var lastScore=0;
 var causeOfDeath;
@@ -245,7 +246,7 @@ Seaweed.prototype.act = function(step) {
 
 
 var playerXSpeed = 12;
-var gravity= 20;
+var gravity= 30;
 var jumpSpeed= 6;
 
 Player.prototype.move = function(step, level, keys) {

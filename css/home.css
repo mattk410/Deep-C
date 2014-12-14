@@ -5,7 +5,8 @@ body {
     background-size:100%;
     position:absolute;
     top:5%;
-    left:40%;
+    left:25%;
+
     
 }
 
@@ -30,7 +31,9 @@ body {
   text-shadow: 2px 2px 2px #43803C;   
 }
 
-
+#welcome-page{
+ zoom:250%;   
+}
 .textbar{
     width: 221px;
     background: transparent;

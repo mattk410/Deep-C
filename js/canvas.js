@@ -12,6 +12,7 @@ function flipHorizontally(context, around) {
 }
 
 function CanvasDisplay(parent, level) {
+  
   this.canvas = document.createElement("canvas");
   this.canvas.width = Math.min(600, level.width * scale);
   this.canvas.height = Math.min(450, level.height * scale);
