@@ -14,8 +14,6 @@ function currentUser()
 	else return false;
 }     
 
-if (currentUser) {showGame();}
-
 
 
 function showGame() {
@@ -42,6 +40,7 @@ function showStatus() {
     $("#game-page").hide(); //show the game page and set it as block.  
     $("#status").show();
     $("canvas").hide();
+    document.getElementById("welcome-userName").innerHTML = Parse.User.current().get("username") + "!";
 
 }
 
@@ -130,7 +129,7 @@ $("#start").click(function() {
 
 $("#logout").click(function () {
     Parse.User.logOut();
-    showHome;
+    showHome();
     alert("hey!");
 });
 
@@ -167,5 +166,5 @@ function setAchieve (achieveName, value) {
         });
 }
 
-
-showHome();
+if (currentUser) {showStatus();}
+else showHome();

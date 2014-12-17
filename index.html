@@ -43,7 +43,7 @@
 <div id = "game-page" ></div>
     
 <div id="status">
-    <p> Welcome! <span id = "welcome-userName"></span></p>
+    <p style = "font-size:20px; "> WELCOME! <span id = "welcome-userName"></span></p>
     <p id="score">Highest Score: 0</p>
     <p id="death">Last Cause of Death: none</p>
     <div id = "radar"></div>
@@ -60,12 +60,6 @@
 <script src="js/15_game.js"></script>
 
 <script>
-document.addEventListener("keydown", function(event) {
-    if (event.keyCode === 65)
-       $("#game-page").show();
-    else if (event.keyCode === 81)
-        $("#game-page").hide();
-});
 RadarChart.defaultConfig.radius = 2;
 var userAchievements = Parse.User.current().get("achievements"); 
 var createData = function (array,title) {
