@@ -24,6 +24,31 @@
   position: relative;
 }
 
+#status {
+
+    opacity:0.8;
+    color:#FBFFC9;
+    font-family: 'arial black';
+    font-style: normal;
+    font-weight: bolder;
+    font-size: 15px;
+    text-decoration: none;
+    border-radius: 2px;
+    text-shadow: 2px 2px 2px #43803C;
+    float:left;
+    text-align: center;
+    margin:0 auto;
+    position:fixed;
+    top: 50%;
+    left: 50%;
+    width:30em;
+    height:18em;
+    margin-top: -9em; /*set to a negative number 1/2 of your height*/
+    margin-left: -15em;    
+}
+
+
+
 
 /*
   Clownfish animation
