@@ -273,7 +273,7 @@ Player.prototype.moveX = function(step, level, keys) {
 };
 
 var gravity = 50;
-var jumpSpeed = 7;
+var jumpSpeed = 10;
 
 Player.prototype.moveY = function(step, level, keys) {
   this.speed.y += step * gravity;
@@ -310,9 +310,9 @@ Level.prototype.playerTouched = function(type, actor) {
   if ((type == "shark" || type == "ground") && this.status == null) {
     causeOfDeath= type;
     if(causeOfDeath=="shark")
-      sharkDeaths++;
+        setAchieve("Shark",1);
     else if(causeOfDeath=="ground")
-        groundDeaths++;
+        setAchieve("Rock!",1);
     document.getElementById("death").innerHTML= "Last Cause of Death: " + causeOfDeath;
     this.status = "lost";
     this.finishDelay = 1;
@@ -326,6 +326,8 @@ Level.prototype.playerTouched = function(type, actor) {
     if (!this.actors.some(function(actor) {
       score += 100;
       fishEaten++;
+      setAchieve("Appetiter",1/5);
+      saveHighScore(score);
       document.getElementById("score").innerHTML= "Score: " + score;
       return actor.type == "fish";
     })) {
@@ -449,6 +451,7 @@ function runGame(plans, Display) {
         lastScore=score;
         document.getElementById("score").innerHTML= "Score: " + score;
         startLevel(n + 1);
+          setAchieve("Level", 5);
       }
       else
         console.log("You win!");
@@ -469,10 +472,11 @@ function init_timer() {
 
 function tick() {
   elapsed++;
-  document.getElementById('time').innerHTML = "Time Elapsed: "+elapsed+"s";
+  setAchieve("Elder", 1/1000);
+  //document.getElementById('time').innerHTML = "Time Elapsed: "+elapsed+"s";
   score-= 3;
   document.getElementById("score").innerHTML= "Score: " + score;
-  timer = setTimeout('tick()', 1000);
+  timer = setTimeout('tick()', 10);
 }
 
 function clear_timer() {
@@ -505,7 +509,6 @@ var myAchievements=[
 ];
 
 function checkAchievements(){
-  console.log("G: "+ groundDeaths +", S: "+sharkDeaths + ", F: "+fishEaten);
   for(var i=0; i<myAchievements.length; i++){
     if(!myAchievements[i].earned){
       if(myAchievements[i].type=="s"){
