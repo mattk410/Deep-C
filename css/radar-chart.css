@@ -37,6 +37,7 @@
 }
 .radar-chart .tooltip.visible {
   opacity: 1;
+    color:#FBFFC9;
 }
 
 /* area transition when hovering */

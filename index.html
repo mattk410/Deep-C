@@ -59,39 +59,6 @@
 <script src="js/level.js"></script>
 <script src="js/15_game.js"></script>
 
-<script>
-RadarChart.defaultConfig.radius = 2;
-var userAchievements = Parse.User.current().get("achievements"); 
-var createData = function (array,title) {
-    var axes = [];
-    array.forEach(function (element){
-      axes.push({axis: element.name, value: element.value});
-    });
-    return [{className: title, axes: axes}];
-  }
-var achievements = createData(userAchievements,"achievements");
-var chart = RadarChart.chart();
-var cfg = chart.config(); // retrieve default config
-var svg = d3.select('#radar').append('svg') 
-            .attr('width', cfg.w)
-            .attr('height', cfg.h + cfg.h / 4);
-svg.append('g').classed('single', 1).datum(achievements).call(chart);
-// many radars
-chart.config({w: cfg.w / 4, h: cfg.h / 4, axisText: false, levels: 0, circles: false});
-cfg = chart.config();
-function render() {
-    var game = svg.selectAll('g.game').data(achievements);
-    game.enter().append('g').classed('game', 1);
-    game
-      .attr('transform', function(d, i) { return 'translate('+(i * cfg.w)+','+ (cfg.h * 4) +')'; })
-      .call(chart);
-    setTimeout(render, 1000);
-}
-render();
-</script>
-
-    
 </body>
-
 
 </html>

@@ -6,15 +6,47 @@ var login = document.getElementById("login-form");
 var signup = document.getElementById("signup-form");
 var gamePage = document.getElementById("game-page");
 var welcomePage = document.getElementById("welcome-page");
+var currentPage = "home";
 
 function currentUser()
 {
 	if(Parse.User.current() != null)
 		return true;
 	else return false;
-}     
+}   
 
 
+var renderAchievements = function () {
+    RadarChart.defaultConfig.radius = 2;
+    var userAchievements = Parse.User.current().get("achievements"); 
+    var createData = function (array,title) {
+        var axes = [];
+        array.forEach(function (element){
+          axes.push({axis: element.name, value: element.value});
+        });
+        return [{className: title, axes: axes}];
+      }
+    var achievements = createData(userAchievements,"achievements");
+    var chart = RadarChart.chart();
+    var cfg = chart.config(); // retrieve default config
+    var svg = d3.select('#radar').append('svg') 
+                .attr('width', cfg.w)
+                .attr('height', cfg.h + cfg.h / 4);
+    svg.append('g').classed('single', 1).datum(achievements).call(chart);
+    // many radars
+    chart.config({w: cfg.w / 4, h: cfg.h / 4, axisText: false, levels: 0, circles: false});
+    cfg = chart.config();
+    function render() {
+        var game = svg.selectAll('g.game').data(achievements);
+        game.enter().append('g').classed('game', 1);
+        game
+          .attr('transform', function(d, i) { return 'translate('+(i * cfg.w)+','+ (cfg.h * 4) +')'; })
+          .call(chart);
+        setTimeout(render, 1000);
+    }
+    render();
+    console.log("renderAchievements is called!");
+}
 
 function showGame() {
     $("#welcome-page").hide();  //hide the welcome page
@@ -26,6 +58,7 @@ function showGame() {
 }
 
 function showHome() { 
+    currentPage = "home";
     $("#welcome-page").show();  //show the welcome page
     //signupError.style.visibility = "hidden"; //hide the error message
     $("#game-page").hide(); //show the game page and set it as block.  
@@ -35,17 +68,16 @@ function showHome() {
 }
 
 function showStatus() {
+    currentPage = "status";
     $("#welcome-page").hide();  //show the welcome page
     //signupError.style.visibility = "hidden"; //hide the error message
     $("#game-page").hide(); //show the game page and set it as block.  
     $("#status").show();
     $("canvas").hide();
     document.getElementById("welcome-userName").innerHTML = Parse.User.current().get("username") + "!";
-
+    renderAchievements();
+    console.log("Status shown!");
 }
-
-
-
 
 function createUser(username,password,email)
 
@@ -66,6 +98,7 @@ function createUser(username,password,email)
 		user.signUp(null, {
 		  success: function(user) {
               showStatus();
+              currentPage = "status";
 		  },
 		  error: function(user, error) {
 			signupError.innerHTML = error.message;
@@ -80,6 +113,7 @@ function loginUser(username, password){
       success: function(user) 
       {
         showStatus();
+          currentPage = "status";
       },
       error: function(user, error) 
       {
@@ -130,7 +164,9 @@ $("#start").click(function() {
 $("#logout").click(function () {
     Parse.User.logOut();
     showHome();
-    alert("hey!");
+   // $("#radar").hide();
+    currentPage = "home";
+    $("#radar").remove();
 });
 
 function saveHighScore (score) {
@@ -165,6 +201,7 @@ function setAchieve (achieveName, value) {
             }
         });
 }
+
 
 if (currentUser) {showStatus();}
 else showHome();
